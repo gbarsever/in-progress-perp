@@ -40,7 +40,7 @@ for pair in new_thing:
 	for true_pair in trues:
 		if set(pair) == set(true_pair):
 			print("yay")
-#FIX ORDER-make pairs match even if they are a,b vs b,a
+#FIX ORDER-make pairs match even if they are a,b vs b,a (FIXED WITH SET! sept2015)
 
 #firstly, for regular accuracy, dont need to know which category they match do
 #at the end, do seperately with verbs just to see
