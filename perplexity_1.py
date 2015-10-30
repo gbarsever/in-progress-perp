@@ -42,7 +42,7 @@ glom_or_in = raw_input("all unknown words in test set in indiviudal categories o
 train_corpus = ["start!*start! i*n really*av love*v cute*a cats*n end!*end!", "start!*start! i*n love*v cute*a dogs*n end!*end!"]
 test_corpus = ["start!*start! i*n like*v cute*a birds*n end!*end!", "start!*start! go*v end!*end!"]
 ff_train_corpus = ["start! i love cute cats end!", "start! i love cute dogs end!"]
-ff_test_cropus = ["start! i like cute birds end!", "start! go end!"]
+ff_test_corpus = ["start! i like cute birds end!", "start! go end!"]
 
 train_dict = {}
 ff_train_dict = {}
@@ -99,7 +99,7 @@ train_dict['glom'] = word_difference
 
 for sentence in ff_train_corpus: #building the dictionary(ies) for training corpora
 	sent = sentence.split()
-	for num in range(len(sent)-3): #dont ignore start and end
+	for num in range(len(sent)-2): #dont ignore start and end
 		new_key = sent[num]+"__"+sent[num+2]  #DOUBLE UNDERSCORE!!!
 		if new_key not in ff_train_dict.keys():
 			ff_train_dict[new_key] = [sent[num+1]]
@@ -121,13 +121,13 @@ for sent in ff_test_corpus:
 			ff_word_list_test.append(word_thing_s[0])
 
 ff_trans_cat_table = {}
-for sent in train_corpus:
+for sent in ff_train_corpus:
 	sent_s = sent.split()
 	for word_thing in sent_s:
 		word_thing_s = word_thing.split("*")
 		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
 			word_list_train.append(word_thing_s[0])
-	for word_num in range(len(sent_s)-1):
+	for word_num in range(len(sent_s)-3):
 		word = sent_s[word_num]
 		both_word = word.split("*")
 		next_word = sent_s[word_num+1]
@@ -145,28 +145,7 @@ word_difference = [item for item in word_list_test if item not in word_list_trai
 train_dict['glom'] = word_difference
 
 #~!~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~	
-ff_trans_cat_table = {}
-for sent in ff_train_corpus:
-	sent_s = sent.split()
-	for word_thing in sent_s:
-		word_thing_s = word_thing.split("*")
-		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
-			word_list_train.append(word_thing_s[0])
-	for word_num in range(len(sent_s)-1):
-		word = sent_s[word_num]
-		both_word = word.split("*")
-		next_word = sent_s[word_num+1]
-		both_next_word = next_word.split("*")
-		new_key = both_word[1]+'$'+both_next_word[1]
-		print new_key
-		if new_key not in trans_cat_table.keys():
-			trans_cat_table[new_key] = 1
-		else:
-			temp = trans_cat_table[new_key] 
-			temp +=1
-			trans_cat_table[new_key] = temp
-# 					
-# print(trans_cat_table) #will need to divide by how much you see first category
+
 			
 ff_list = ff_train_dict.keys()	
 
