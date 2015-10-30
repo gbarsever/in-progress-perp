@@ -7,7 +7,7 @@ import numpy
 
 #
 ##
-#make a separate thing for types, this is tokens
+#make a separate thing for types, this is tokens (add parameter?)
 ##
 #
 #new improved perplexity code!
@@ -82,7 +82,6 @@ for sent in train_corpus:
 		next_word = sent_s[word_num+1]
 		both_next_word = next_word.split("*")
 		new_key = both_word[1]+'$'+both_next_word[1]
-		print new_key
 		if new_key not in trans_cat_table.keys():
 			trans_cat_table[new_key] = 1
 		else:
@@ -91,11 +90,12 @@ for sent in train_corpus:
 			trans_cat_table[new_key] = temp
 			#figure out something here for how to get frequency of "starts"
 
-word_difference = [item for item in word_list_test if item not in word_list_test]
+word_difference = [item for item in word_list_test if item not in word_list_train]
 train_dict['glom'] = word_difference
 
 
-# for FF
+
+#~*~*~*~*~*~*~*~*~*~* for FF
 
 for sentence in ff_train_corpus: #building the dictionary(ies) for training corpora
 	sent = sentence.split()
@@ -108,24 +108,63 @@ for sentence in ff_train_corpus: #building the dictionary(ies) for training corp
 			temp_list.append(sent[num+1])
 			ff_train_dict[new_key] = temp_list
 			
-#print ff_train_dict
-		
-# ff_trans_cat_table = {}
-# for sent in ff_train_corpus:
-# 	sent_s = sent.split()
-# 	for word_num in range(len(sent_s)-1):
-# 		word = sent_s[word_num]
-# 		both_word = word.split("*")
-# 		next_word = sent_s[word_num+1]
-# 		both_next_word = next_word.split("*")
-# 		new_key = both_word[1]+'$'+both_next_word[1]
-# 		print new_key
-# 		if new_key not in trans_cat_table.keys():
-# 			trans_cat_table[new_key] = 1
-# 		else:
-# 			temp = trans_cat_table[new_key] 
-# 			temp +=1
-# 			trans_cat_table[new_key] = temp
+print ff_train_dict
+
+ff_word_list_train = []
+ff_word_list_test = []
+
+for sent in ff_test_corpus:
+	sent_s = sent.split()
+	for word_thing in sent_s:
+		word_thing_s = word_thing.split("*")
+		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
+			ff_word_list_test.append(word_thing_s[0])
+
+ff_trans_cat_table = {}
+for sent in train_corpus:
+	sent_s = sent.split()
+	for word_thing in sent_s:
+		word_thing_s = word_thing.split("*")
+		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
+			word_list_train.append(word_thing_s[0])
+	for word_num in range(len(sent_s)-1):
+		word = sent_s[word_num]
+		both_word = word.split("*")
+		next_word = sent_s[word_num+1]
+		both_next_word = next_word.split("*")
+		new_key = both_word[1]+'$'+both_next_word[1]
+		if new_key not in trans_cat_table.keys():
+			trans_cat_table[new_key] = 1
+		else:
+			temp = trans_cat_table[new_key] 
+			temp +=1
+			trans_cat_table[new_key] = temp
+			#figure out something here for how to get frequency of "starts"
+
+word_difference = [item for item in word_list_test if item not in word_list_train]
+train_dict['glom'] = word_difference
+
+#~!~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~	
+ff_trans_cat_table = {}
+for sent in ff_train_corpus:
+	sent_s = sent.split()
+	for word_thing in sent_s:
+		word_thing_s = word_thing.split("*")
+		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
+			word_list_train.append(word_thing_s[0])
+	for word_num in range(len(sent_s)-1):
+		word = sent_s[word_num]
+		both_word = word.split("*")
+		next_word = sent_s[word_num+1]
+		both_next_word = next_word.split("*")
+		new_key = both_word[1]+'$'+both_next_word[1]
+		print new_key
+		if new_key not in trans_cat_table.keys():
+			trans_cat_table[new_key] = 1
+		else:
+			temp = trans_cat_table[new_key] 
+			temp +=1
+			trans_cat_table[new_key] = temp
 # 					
 # print(trans_cat_table) #will need to divide by how much you see first category
 			
@@ -168,7 +207,7 @@ def prob_utterance(k):
 			p_emiss = (train_dict[word_split[1]].count(word_split[0]) + 0.5)/(len(train_dict[word_split[1]])+0.5)
 		else:
 			if glom_or_in == 'i':
-				p_emiss = 0.5/0.5
+				p_emiss = 0.5/0.5 #b/c the prob is gonna be 1/1 for every tiny category
 			else:
 				p_emiss = (train_dict['glom'].count(word_split[0]) + 0.5)/(len(train_dict['glom'])+0.5) #SOMETHING WEIRD HERE!!!!
 		print(minus_end,p_trans_temp,p_emiss)
