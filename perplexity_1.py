@@ -96,6 +96,7 @@ train_dict['glom'] = word_difference
 
 
 #~*~*~*~*~*~*~*~*~*~* for FF
+
 new_ff_train = []
 for sentence in ff_train_corpus: #building the dictionary(ies) for training corpora
 	sent = sentence.split()
@@ -137,7 +138,25 @@ for sent in ff_test_corpus:
 ff_trans_cat_table = {}
 #preprocess!  turn into thing that looks like the english (and then do same thing to test)
 
-
+for sent in new_ff_train:
+	sent_s = sent.split()
+	for word_thing in sent_s:
+		word_thing_s = word_thing.split("*")
+		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
+			ff_word_list_train.append(word_thing_s[0])
+	for word_num in range(len(sent_s)-1):
+		word = sent_s[word_num]
+		both_word = word.split("*")
+		next_word = sent_s[word_num+1]
+		both_next_word = next_word.split("*")
+		new_key = both_word[1]+'$'+both_next_word[1]
+		if new_key not in ff_trans_cat_table.keys():
+			ff_trans_cat_table[new_key] = 1
+		else:
+			temp = ff_trans_cat_table[new_key] 
+			temp +=1
+			ff_trans_cat_table[new_key] = temp
+			#figure out something here for how to get frequency of "starts"
 
 # for sent in ff_train_corpus:
 # 	sent_s = sent.split()
@@ -161,8 +180,9 @@ ff_trans_cat_table = {}
 # 				#figure out something here for how to get frequency of "starts"
 
 
-word_difference = [item for item in word_list_test if item not in word_list_train]
-train_dict['glom'] = word_difference
+ff_word_difference = [item for item in ff_word_list_test if item not in ff_word_list_train]
+ff_train_dict['glom'] = ff_word_difference
+print(ff_trans_cat_table)
 
 #~!~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~	
 
@@ -183,7 +203,7 @@ ff_list = ff_train_dict.keys()
 
 
 
-def prob_utterance(k):
+def prob_utterance(k,tab, l):
 	'''calculates the probability of a sentence minus the end part given a sentence'''
 	g = k.split()
 	minus_end = 1
@@ -193,50 +213,50 @@ def prob_utterance(k):
 		word_split2 = g[x-1].split("*") #previous Gn
 		print(word_split2)
 		trans_key =  word_split2[1]+'$'+word_split[1]
-		if trans_key in trans_cat_table.keys():
-			trans_val = trans_cat_table[trans_key] + 0.5
+		if trans_key in tab.keys():
+			trans_val = tab[trans_key] + 0.5
 		else:
 			trans_val = 0.5
-		if word_split2[1] in train_dict.keys():
-			num_previous_cat = len(train_dict[word_split2[1]])+0.5
+		if word_split2[1] in l.keys():
+			num_previous_cat = len(l[word_split2[1]])+0.5
 		else:
 			num_previous_cat = 0.5
 		p_trans_temp = trans_val/num_previous_cat
-		if word_split[1] in train_dict.keys():
-			p_emiss = (train_dict[word_split[1]].count(word_split[0]) + 0.5)/(len(train_dict[word_split[1]])+0.5)
+		if word_split[1] in l.keys():
+			p_emiss = (l[word_split[1]].count(word_split[0]) + 0.5)/(len(l[word_split[1]])+0.5)
 		else:
 			if glom_or_in == 'i':
 				p_emiss = 0.5/0.5 #b/c the prob is gonna be 1/1 for every tiny category
 			else:
-				p_emiss = (train_dict['glom'].count(word_split[0]) + 0.5)/(len(train_dict['glom'])+0.5) #SOMETHING WEIRD HERE!!!!
+				p_emiss = (l['glom'].count(word_split[0]) + 0.5)/(len(l['glom'])+0.5) #SOMETHING WEIRD HERE!!!!
 		print(minus_end,p_trans_temp,p_emiss)
 		minus_end = minus_end * p_trans_temp * p_emiss
 	return log10(minus_end)
 	
-def ends_of_utterance(j):
+def ends_of_utterance(j,tab,l):
 	'''calculates the probability of the end part of the sentence'''
 	g = j.split()
 	ends = 1
 	word_split = g[-1].split("*")
 	word_split2 = g[-2].split("*") #previous Gn
 	trans_key =  word_split2[1]+'$'+word_split[1]
-	if trans_key in trans_cat_table.keys():
-		trans_val = trans_cat_table[trans_key] + 0.5
+	if trans_key in tab.keys():
+		trans_val = tab[trans_key] + 0.5
 	else:
 		trans_val = 0.5
-	if word_split2[1] in train_dict.keys():
-		num_previous_cat = len(train_dict[word_split2[1]])+0.5
+	if word_split2[1] in l.keys():
+		num_previous_cat = len(l[word_split2[1]])+0.5
 	else:
 		num_previous_cat = 0.5
 	ends = trans_val/num_previous_cat
 	return log10(ends)
 
-def calculate_perplexity(t_c):
+def calculate_perplexity(t_c,table,tab_list):
 	'''calculates total probability of corpus using logs (and then taking them out)'''
 	sentence_prob = 0
 	test_perplex = 0
-	for sent in test_corpus:
-		sentence_prob = sentence_prob + prob_utterance(sent) + ends_of_utterance(sent)
+	for sent in t_c:
+		sentence_prob = sentence_prob + prob_utterance(sent, table, tab_list) + ends_of_utterance(sent,table,tab_list)
 		test_perplex += perplexity(sent, sentence_prob)
 	corpus_perplexity = test_perplex/len(test_corpus)
 	return corpus_perplexity
@@ -251,7 +271,10 @@ def perplexity(s, total_prob):
 	perplex = 10**(predone)
 	return perplex
 
-print(calculate_perplexity(test_corpus))	
+#print(calculate_perplexity(test_corpus, trans_cat_table, train_dict)) #needs test corpus, trans_cat_table, and train_dict	
+
+print(calculate_perplexity(new_ff_test, ff_trans_cat_table, ff_train_dict))
+
 
 
 
