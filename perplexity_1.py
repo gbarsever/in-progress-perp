@@ -39,9 +39,9 @@ glom_or_in = raw_input("all unknown words in test set in indiviudal categories o
 #glom_or_in = "i" #just for testing
 
 
-train_corpus = ["start!*start! i*n really*av love*v cute*a cats*n end!*end!", "start!*start! i*n love*v cute*a dogs*n end!*end!"]
+train_corpus = ["start!*start! i*n really*av love*v cute*a cats*n end!*end!", "start!*start! i*n love*v cute*a dogs*n end!*end!", "start!*start! fly*v end!*end!"]
 test_corpus = ["start!*start! i*n like*v cute*a birds*n end!*end!", "start!*start! go*v end!*end!"]
-ff_train_corpus = ["start! i love cute cats end!", "start! i love cute dogs end!"]
+ff_train_corpus = ["start! i love cute cats end!", "start! i love cute dogs end!", "start! fly end!"]
 ff_test_corpus = ["start! i like cute birds end!", "start! go end!"]
 
 train_dict = {}
@@ -96,19 +96,33 @@ train_dict['glom'] = word_difference
 
 
 #~*~*~*~*~*~*~*~*~*~* for FF
-
+new_ff_train = []
 for sentence in ff_train_corpus: #building the dictionary(ies) for training corpora
 	sent = sentence.split()
+	new_ff_train_sentence = "start!*start!"
 	for num in range(len(sent)-2): #dont ignore start and end
 		new_key = sent[num]+"__"+sent[num+2]  #DOUBLE UNDERSCORE!!!
+		new_ff_train_sentence += " "+ sent[num+1] + "*" + new_key +" "
 		if new_key not in ff_train_dict.keys():
 			ff_train_dict[new_key] = [sent[num+1]]
 		else:
 			temp_list = ff_train_dict[new_key]
 			temp_list.append(sent[num+1])
 			ff_train_dict[new_key] = temp_list
+	new_ff_train_sentence += "end!*end!"
+	new_ff_train.append(new_ff_train_sentence)
+
+new_ff_test = []
+for sentence in ff_test_corpus: #building the dictionary(ies) for training corpora
+	sent = sentence.split()
+	new_ff_test_sentence = "start!*start!"
+	for num in range(len(sent)-2): #dont ignore start and end
+		new_key = sent[num]+"__"+sent[num+2]  #DOUBLE UNDERSCORE!!!
+		new_ff_test_sentence += " "+ sent[num+1] + "*" + new_key +" "
+	new_ff_test_sentence += "end!*end!"
+	new_ff_test.append(new_ff_train_sentence)
 			
-print ff_train_dict
+print new_ff_test
 
 ff_word_list_train = []
 ff_word_list_test = []
@@ -121,25 +135,31 @@ for sent in ff_test_corpus:
 			ff_word_list_test.append(word_thing_s[0])
 
 ff_trans_cat_table = {}
-for sent in ff_train_corpus:
-	sent_s = sent.split()
-	for word_thing in sent_s:
-		word_thing_s = word_thing.split("*")
-		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
-			word_list_train.append(word_thing_s[0])
-	for word_num in range(len(sent_s)-3):
-		word = sent_s[word_num]
-		both_word = word.split("*")
-		next_word = sent_s[word_num+1]
-		both_next_word = next_word.split("*")
-		new_key = both_word[1]+'$'+both_next_word[1]
-		if new_key not in trans_cat_table.keys():
-			trans_cat_table[new_key] = 1
-		else:
-			temp = trans_cat_table[new_key] 
-			temp +=1
-			trans_cat_table[new_key] = temp
-			#figure out something here for how to get frequency of "starts"
+#preprocess!  turn into thing that looks like the english (and then do same thing to test)
+
+
+
+# for sent in ff_train_corpus:
+# 	sent_s = sent.split()
+# 	for word_thing in sent_s:
+# 		word_thing_s = word_thing.split("*")
+# 		if word_thing_s[0] != "start!" and word_thing_s[0] != "end!":
+# 			ff_word_list_train.append(word_thing_s[0])
+# 	if len(sent_s) > 3: #ALSO FOR START AND ENDS, WEIRD!!~~~~~~~
+# 		for word_num in range(len(sent_s)-3):
+# 			word = sent_s[word_num]
+# 			next_word = sent_s[word_num+1]
+# 			nnext_word = sent_s[word_num+2]
+# 			nnnext_word = sent_s[word_num+3]
+# 			new_key = both_word[1]+'$'+both_next_word[1]
+# 			if new_key not in trans_cat_table.keys():
+# 				trans_cat_table[new_key] = 1
+# 			else:
+# 				temp = trans_cat_table[new_key] 
+# 				temp +=1
+# 				trans_cat_table[new_key] = temp
+# 				#figure out something here for how to get frequency of "starts"
+
 
 word_difference = [item for item in word_list_test if item not in word_list_train]
 train_dict['glom'] = word_difference
