@@ -114,16 +114,14 @@ for sentence in ff_train_corpus: #building the dictionary(ies) for training corp
 	new_ff_train.append(new_ff_train_sentence)
 
 new_ff_test = []
-for sentence in ff_test_corpus: #building the dictionary(ies) for training corpora
+for sentence in ff_test_corpus: 
 	sent = sentence.split()
 	new_ff_test_sentence = "start!*start!"
 	for num in range(len(sent)-2): #dont ignore start and end
 		new_key = sent[num]+"__"+sent[num+2]  #DOUBLE UNDERSCORE!!!
 		new_ff_test_sentence += " "+ sent[num+1] + "*" + new_key +" "
 	new_ff_test_sentence += "end!*end!"
-	new_ff_test.append(new_ff_train_sentence)
-			
-print new_ff_test
+
 
 ff_word_list_train = []
 ff_word_list_test = []
@@ -182,7 +180,7 @@ for sent in new_ff_train:
 
 ff_word_difference = [item for item in ff_word_list_test if item not in ff_word_list_train]
 ff_train_dict['glom'] = ff_word_difference
-print(ff_trans_cat_table)
+
 
 #~!~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~	
 
@@ -274,6 +272,8 @@ def perplexity(s, total_prob):
 #print(calculate_perplexity(test_corpus, trans_cat_table, train_dict)) #needs test corpus, trans_cat_table, and train_dict	
 
 print(calculate_perplexity(new_ff_test, ff_trans_cat_table, ff_train_dict))
+
+PROBABLILITIES SHOULDNT BE OVER 1!!!!!!!!
 
 
 
