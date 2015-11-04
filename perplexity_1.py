@@ -35,8 +35,7 @@ import numpy
 #have an input parameter about whether unknown words exist in individual or glom category
 
 # how to make this command paramter??? 
-glom_or_in = raw_input("all unknown words in test set in indiviudal categories or one glommed one? type \"i\" for indiviudal and \"g\" for glommed\n")
-#glom_or_in = "i" #just for testing
+
 
 
 train_corpus = ["start!*start! i*n really*av love*v cute*a cats*n end!*end!", "start!*start! i*n love*v cute*a dogs*n end!*end!", "start!*start! fly*v end!*end!"]
@@ -121,6 +120,7 @@ for sentence in ff_test_corpus:
 		new_key = sent[num]+"__"+sent[num+2]  #DOUBLE UNDERSCORE!!!
 		new_ff_test_sentence += " "+ sent[num+1] + "*" + new_key +" "
 	new_ff_test_sentence += "end!*end!"
+	new_ff_test.append(new_ff_test_sentence)
 
 
 ff_word_list_train = []
@@ -207,9 +207,7 @@ def prob_utterance(k,tab, l):
 	minus_end = 1
 	for x in range(1,len(g)-1):
 		word_split = g[x].split("*")
-		print(word_split)
 		word_split2 = g[x-1].split("*") #previous Gn
-		print(word_split2)
 		trans_key =  word_split2[1]+'$'+word_split[1]
 		if trans_key in tab.keys() and word_split2[1] in l.keys():
 			trans_val = tab[trans_key] + 0.5
@@ -221,10 +219,7 @@ def prob_utterance(k,tab, l):
 		if word_split[1] in l.keys():
 			p_emiss = (l[word_split[1]].count(word_split[0]) + 0.5)/(len(l[word_split[1]])+0.5)
 		else:
-			if glom_or_in == 'i':
-				p_emiss = 0.5/0.5 #b/c the prob is gonna be 1/1 for every tiny category
-			else:
-				p_emiss = (l['glom'].count(word_split[0]) + 0.5)/(len(l['glom'])+0.5) #SOMETHING WEIRD HERE!!!!
+			p_emiss = 0.5/0.5 #b/c the prob is gonna be 1/1 for every tiny category
 		print(minus_end,p_trans_temp,p_emiss)
 		minus_end = minus_end * p_trans_temp * p_emiss
 	return log10(minus_end)
@@ -267,16 +262,11 @@ def perplexity(s, total_prob):
 	perplex = 10**(predone)
 	return perplex
 
-#print(calculate_perplexity(test_corpus, trans_cat_table, train_dict)) #needs test corpus, trans_cat_table, and train_dict	
+print(calculate_perplexity(test_corpus, trans_cat_table, train_dict)) #needs test corpus, trans_cat_table, and train_dict	
 
 print(calculate_perplexity(new_ff_test, ff_trans_cat_table, ff_train_dict))
 
-#PROBABLILITIES SHOULDNT BE OVER 1!!!!!!!!
 
-
-
-
-		
 		
 		
 	 
