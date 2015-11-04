@@ -211,13 +211,11 @@ def prob_utterance(k,tab, l):
 		word_split2 = g[x-1].split("*") #previous Gn
 		print(word_split2)
 		trans_key =  word_split2[1]+'$'+word_split[1]
-		if trans_key in tab.keys():
+		if trans_key in tab.keys() and word_split2[1] in l.keys():
 			trans_val = tab[trans_key] + 0.5
-		else:
-			trans_val = 0.5
-		if word_split2[1] in l.keys():
 			num_previous_cat = len(l[word_split2[1]])+0.5
 		else:
+			trans_val = 0.5
 			num_previous_cat = 0.5
 		p_trans_temp = trans_val/num_previous_cat
 		if word_split[1] in l.keys():
@@ -273,7 +271,7 @@ def perplexity(s, total_prob):
 
 print(calculate_perplexity(new_ff_test, ff_trans_cat_table, ff_train_dict))
 
-PROBABLILITIES SHOULDNT BE OVER 1!!!!!!!!
+#PROBABLILITIES SHOULDNT BE OVER 1!!!!!!!!
 
 
 
