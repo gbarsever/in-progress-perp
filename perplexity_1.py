@@ -23,6 +23,28 @@ import numpy
 
 #start by inputting files (format could be in stella's code)
 
+frame_or_no = input("do you want to determine perplexity over frames or categories?\nFor frames enter f, for categories enter c:\n")
+for file_num in range(0,10,1):
+	if frame_or_no == "f":
+		infile1 = open(str(file_num)+'chunck_train_ff_engNEW.txt','r')
+		infile2 = open(str(file_num)+'chunck_test_ff_engNEW.txt','r')#
+		readinfile1 = infile1.readlines()
+		readinfile2 = infile2.readlines()
+		infile1.close()
+		infile2.close()
+		test_cats = []
+	elif frame_or_no == "c":
+		infile1 = open(str(file_num)+'chunck_train_gold_engNEW.txt','r')
+		infile2 = open(str(file_num)+'chunck_test_gold_engNEW.txt','r')#
+		readinfile1 = infile1.readlines()
+		readinfile2 = infile2.readlines()
+		infile1.close()
+		infile2.close()
+	else:
+		print("you entered something weird.  boo.\n")
+		break
+
+
 #should make table of all probabilities in training set.
 
 ## need: container for grammatical categories and the words they belong to
@@ -34,7 +56,7 @@ import numpy
 
 #have an input parameter about whether unknown words exist in individual or glom category
 
-# how to make this command paramter??? 
+# how to make this command parameter??? 
 
 
 
