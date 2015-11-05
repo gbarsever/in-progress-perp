@@ -29,6 +29,7 @@ for file_num in range(0,10,1):
 	if frame_or_no == "f":
 		infile1 = open('./input_corpora/'+str(file_num)+'chunck_train_ff_engNEW.txt','r')
 		infile2 = open('./input_corpora/'+str(file_num)+'chunck_test_ff_engNEW.txt','r')#
+		#infile1 = open('clean_corpus.txt','r')
 		readinfile1 = infile1.readlines()
 		readinfile2 = infile2.readlines()
 		infile1.close()
@@ -106,9 +107,18 @@ for file_num in range(0,10,1):
 					ff_trans_cat_table[new_key] = temp
 					#figure out something here for how to get frequency of "starts"
 
-		print ff_word_list_test
 		ff_word_difference = [item for item in ff_word_list_test if item not in ff_word_list_train]
 		ff_train_dict['glom'] = ff_word_difference
+		
+		#now making it frequent, needs to have .5% of types and .1% of tokens
+		new_ff_train_dict = {}
+		for thing in ff_train_dict.keys():
+			if len(set(ff_train_dict[thing])) >= (.005)*len(set(ff_word_list_train)) and len(ff_train_dict[thing]) >= (.001)*len(ff_word_list_train) and len(set(ff_train_dict[thing])) > 2:
+				new_ff_train_dict[thing] = ff_train_dict[thing]
+		
+		#print(len(new_ff_train_dict.keys()))
+		
+		#break
 			
 		ff_list = ff_train_dict.keys()	
 
@@ -269,11 +279,8 @@ for file_num in range(0,10,1):
 		test_perplex = 0
 		for sent in t_c:
 			sentence_prob = 0
-			print sent
 			sentence_prob = prob_utterance(sent, table, tab_list) + ends_of_utterance(sent,table,tab_list)
 			test_perplex += perplexity(sent, sentence_prob)
-			print test_perplex
-			print "yyayay"
 		corpus_perplexity = test_perplex/len(t_c)
 		return corpus_perplexity
 	
@@ -284,7 +291,6 @@ for file_num in range(0,10,1):
 		predone = 0
 		count = len(s)-2 #not counting start and end
 		predone = (-1/count)*total_prob
-		print total_prob
 		perplex = numpy.power(10,predone)
 		return perplex
 

@@ -1,0 +1,17 @@
+start! end! & neg  
+	recall: 0.0188541358718	precision: 0.124791609596
+a end! & neg  
+	recall: 0.0302335481582	precision: 0.416231176231
+you end! & neg  
+	recall: 0.00638604983452	precision: 0.103301886792
+that end! & neg  
+	recall: 0.00267013539881	precision: 0.137089429907
+your end! & neg  
+	recall: 0.00842901909774	precision: 0.452485240906
+the end! & neg  
+	recall: 0.0412274581683	precision: 0.46437038813
+it end! & neg  
+	recall: 0.00700387401782	precision: 0.0388561714529
+
+************
+av precision: 0.248160843288	av:recall: 0.0164006029353
