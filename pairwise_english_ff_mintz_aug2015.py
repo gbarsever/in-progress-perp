@@ -65,9 +65,10 @@ readinfile1 = for_lists.splitlines()
 for_frames_list= []
 for a_thing in readinfile1:
 	if a_thing != '\n':
-		new_a_string = "start! "+a_thing+" end!"
-		for_frames_list.append(new_a_string.split())
-
+		new_a_string = a_thing#"start! "+a_thing+" end!"
+		if new_a_string:
+			for_frames_list.append(new_a_string.split())
+print(for_frames_list)
 
 print("making frames")
 #Mintz 2003 did NOT use utterance boundaries!! most of our frequent frames use utterance boundaries
@@ -77,7 +78,7 @@ group_list = []
 for split_line in for_frames_list:
 	for y in range(len(split_line)):
 		group = []
-		if (y+2) < len(split_line): #????
+		if (y+2) < len(split_line): 
 			key_thing = str(split_line[y]+' '+split_line[y+2])
 			if key_thing not in FRAMES:
 				group.append(split_line[y+1])
@@ -99,15 +100,15 @@ for ff_frame in FRAMES:
 	if len(set(FRAMES[ff_frame]))>=(.005*len(type_list)) and len(FRAMES[ff_frame]) >=(.001*len(token_list)):
 		ff_FRAMES[ff_frame] = FRAMES[ff_frame]
 #for ff_thing in ff_FRAMES.keys():
-#print(ff_FRAMES.keys())
+print(ff_FRAMES)
 print("# FF", len(ff_FRAMES.keys())) #need to control for types...but did that already?
 infile.close()
 
-print(ff_FRAMES.keys())
-for key_frame in ff_FRAMES.keys():
-	if len(set(ff_FRAMES[key_frame])) == 1:
-		ff_FRAMES.pop(key_frame, None)
-print(ff_FRAMES.keys())
+# print(ff_FRAMES.keys())
+# for key_frame in ff_FRAMES.keys():
+# 	if len(set(ff_FRAMES[key_frame])) == 1:
+# 		ff_FRAMES.pop(key_frame, None)
+# print(ff_FRAMES.keys())
 #sys.exit()
 
 
