@@ -180,9 +180,9 @@ for file_num in range(0,10,1):
 		for sentence in for_cat_list_a:
 			sent_cat_f = sentence[1].split("**")
 			if category == sent_cat_f[1]:#start-word(['category
-				count +=1'''
+				count +=1
 			else:
-				count = 0'''
+				count = 0
 			sent_cat_l = sentence[-2].split("**")
 			for pos in range(1,len(sentence)-1,1):
 				word_plus_cat_end2 = sentence[pos].split("**")
